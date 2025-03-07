@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/workflow-desginer.iml" filepath="$PROJECT_DIR$/workflow-desginer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/workflow-designer.iml" filepath="$PROJECT_DIR$/workflow-designer.iml" />
     </modules>
   </component>
 </project>
