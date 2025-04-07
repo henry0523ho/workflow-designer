@@ -1,30 +1,36 @@
 package view;
 
 import javax.swing.*;
-import java.awt.*;
+
+import controller.*;
 
 public class MainWindow extends JFrame {
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
+    MainController maincontroller;
+
+    MenuBar menuBar;
+    SideBar sidebar;
+    CanvasArea canvasArea;
 
     public MainWindow() {
-        setTitle("Workflow Designer");
+        setTitle("Workflow util.Designer");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
+        maincontroller = new MainController(this);
 
-        // 加入不同畫面
-//        mainPanel.add(new LoginPanel(this), "LOGIN");
-//        mainPanel.add(new DashboardPanel(this), "DASHBOARD");
+        menuBar = new MenuBar();
+        setJMenuBar(menuBar);
 
-        add(mainPanel);
+        sidebar = new SideBar();
+        add(sidebar, "West");
+
+        canvasArea=new CanvasArea();
+        add(canvasArea, "Center");
         setVisible(true);
+
+
     }
 
-    public void switchPanel(String panelName) {
-        cardLayout.show(mainPanel, panelName);
-    }
+
 }
