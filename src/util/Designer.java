@@ -81,14 +81,15 @@ public class Designer {
     public void groupSelected() {
         ArrayList<BasicObject> selectedObjects = new ArrayList<>();
         for (BasicObject object : _objects) {
-            if (object.selected) {
+            if (object.selected && !object.mute) {
                 selectedObjects.add(object);
             }
         }
         for (BasicObject object : selectedObjects) {
-            _objects.remove(object);
+//            _objects.remove(object);
+            object.mute = true;
         }
-        if (!selectedObjects.isEmpty()) {
+        if (selectedObjects.size() > 1) {
             CompositeObject compositeObject = new CompositeObject(selectedObjects);
             _objects.add(compositeObject);
             clearAllSelected();
@@ -102,16 +103,18 @@ public class Designer {
                 selectedObjects.add(object);
             }
         }
-        if (selectedObjects.size() != 1) {
+        if (selectedObjects.isEmpty()) {
             return;
         }
-        BasicObject object = selectedObjects.getFirst();
+        BasicObject object = selectedObjects.getLast();
         if (!(object instanceof CompositeObject compositeObject)) {
             return;
         }
-        _objects.addAll(compositeObject.objects);
-        for(BasicObject obj : compositeObject.objects) {
+//        _objects.addAll(compositeObject.objects);
+
+        for (BasicObject obj : compositeObject.objects) {
             obj.setSelected(true);
+            obj.mute = false;
         }
         _objects.remove(object);
     }

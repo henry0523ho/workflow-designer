@@ -26,14 +26,16 @@ public class CompositeObject extends BasicObject {
 
     @Override
     public void render(Graphics g) {
-        for (BasicObject object : objects) {
-            object.render(g);
-        }
-//        if(selected) {
-//            for (BasicObject object : objects) {
-//                object._drawConnectionPort(g);
-//            }
+//        for (BasicObject object : objects) {
+//            object.render(g);
 //        }
+    }
+
+    @Override
+    public void move(double dx, double dy) {
+        for (BasicObject object : objects) {
+            object.move(dx, dy);
+        }
     }
 
     public boolean inside(double detectX, double detectY) {
@@ -46,6 +48,11 @@ public class CompositeObject extends BasicObject {
     }
 
     public boolean inside(double x1, double y1, double x2, double y2) {
-        return false;
+        for (BasicObject object : objects) {
+            if (!object.inside(x1, y1, x2, y2)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

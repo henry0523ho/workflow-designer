@@ -14,4 +14,8 @@ public class ConnectionPort{
         g.setColor(new Color(0, 0, 0,255));
         g.fillRect(x-WIDTH/2,y-WIDTH/2,WIDTH,WIDTH);
     }
+    public void move(int dx, int dy){
+        x+=dx;
+        y+=dy;
+    }
 }

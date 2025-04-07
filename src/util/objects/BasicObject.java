@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public abstract class BasicObject {
     public double x, y;
     public boolean selected = false;
+    public boolean mute = false;
 
     ArrayList<ConnectionPort> connectionPorts = new ArrayList<ConnectionPort>();
 
@@ -34,4 +35,12 @@ public abstract class BasicObject {
     public abstract boolean inside(double detectX, double detextY);
 
     public abstract boolean inside(double x1, double y1, double x2, double y2);
+
+    public void move(double dx, double dy) {
+        x += dx;
+        y += dy;
+        for (ConnectionPort c : connectionPorts) {
+            c.move((int) dx, (int) dy);
+        }
+    }
 }

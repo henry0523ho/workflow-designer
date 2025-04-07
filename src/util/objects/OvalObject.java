@@ -33,17 +33,18 @@ public class OvalObject extends BasicObject {
         _draw(g);
         if (selected) _drawConnectionPort(g);
     }
+
     public boolean inside(double x1, double y1, double x2, double y2) {
-        if(x1>x2){
-            double tmp=x1;
-            x1=x2;
-            x2=tmp;
+        if (x1 > x2) {
+            double tmp = x1;
+            x1 = x2;
+            x2 = tmp;
         }
-        if(y1>y2){
-            double tmp=y1;
-            y1=y2;
-            y2=tmp;
+        if (y1 > y2) {
+            double tmp = y1;
+            y1 = y2;
+            y2 = tmp;
         }
-        return x1<=x&&x+WIDTH<=x2&&y1<=y&&y+HEIGHT<=y2;
+        return x1 <= x && x + WIDTH <= x2 && y1 <= y && y + HEIGHT <= y2;
     }
 }

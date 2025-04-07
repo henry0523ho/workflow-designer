@@ -24,8 +24,16 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
     int _dragEndX = -1;
     int _dragEndY = -1;
 
+    enum DragMode {
+        SELECT_AREA,
+        DRAG_OBJECT
+    }
+
+    DragMode dragMode = null;
+    BasicObject dragObject = null;
+
     public void drawSelectArea(Graphics g) {
-        if (_dragStartX == -1 || _dragStartY == -1 || _dragEndX == -1 || _dragEndY == -1) return;
+        if (dragMode != DragMode.SELECT_AREA) return;
         g.setColor(new Color(180, 180, 255, 200));
         g.fillRect(Math.min(_dragStartX, _dragEndX), Math.min(_dragStartY, _dragEndY), Math.abs(_dragStartX - _dragEndX), Math.abs(_dragStartY - _dragEndY));
         g.setColor(new Color(180, 180, 255, 100));
@@ -40,13 +48,28 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
     public void mouseDragged(MouseEvent e) {
         if (Designer.instance.mode == Designer.Mode.SELECT) {
             if (_dragStartX == -1 || _dragStartY == -1) {
+                dragObject = Designer.instance.detectObject(e.getX(), e.getY());
                 _dragStartX = e.getX();
                 _dragStartY = e.getY();
-                return;
+                if (dragObject != null) {
+                    dragMode = DragMode.DRAG_OBJECT;
+                    return;
+                } else {
+                    dragMode = DragMode.SELECT_AREA;
+                    return;
+                }
             }
-            _dragEndX = e.getX();
-            _dragEndY = e.getY();
-            canvasArea.repaint();
+            if(dragMode == DragMode.DRAG_OBJECT) {
+                dragObject.move(e.getX()-_dragStartX, e.getY()-_dragStartY);
+                _dragStartX = e.getX();
+                _dragStartY = e.getY();
+                canvasArea.repaint();
+            }
+            else if (dragMode == DragMode.SELECT_AREA) {
+                _dragEndX = e.getX();
+                _dragEndY = e.getY();
+                canvasArea.repaint();
+            }
         }
     }
 
@@ -94,16 +117,24 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
     @Override
     public void mouseReleased(MouseEvent e) {
         if (Designer.instance.mode == Designer.Mode.SELECT) {
-            if (_dragEndX == -1 || _dragEndY == -1) {
-                return;
+            if (dragMode == DragMode.DRAG_OBJECT) {
+                _dragStartX = _dragEndX = _dragStartY = _dragEndY = -1;
+                dragMode = null;
+            } else if (dragMode == DragMode.SELECT_AREA) {
+                if (_dragEndX == -1 || _dragEndY == -1) {
+                    return;
+                }
+                Designer.instance.clearAllSelected();
+                ArrayList<BasicObject> selectedObjects = Designer.instance.detectObject(_dragStartX, _dragStartY, _dragEndX, _dragEndY);
+                for (BasicObject object : selectedObjects) {
+                    if(!object.mute){
+                        object.setSelected(true);
+                    }
+                }
+                _dragStartX = _dragEndX = _dragStartY = _dragEndY = -1;
+                canvasArea.repaint();
+                dragMode = null;
             }
-            Designer.instance.clearAllSelected();
-            ArrayList<BasicObject> selectedObjects = Designer.instance.detectObject(_dragStartX, _dragStartY, _dragEndX, _dragEndY);
-            for (BasicObject object : selectedObjects) {
-                object.setSelected(true);
-            }
-            _dragStartX = _dragEndX = _dragStartY = _dragEndY = -1;
-            canvasArea.repaint();
         }
 
     }
