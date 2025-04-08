@@ -5,6 +5,7 @@ import javax.swing.*;
 import controller.*;
 
 public class MainWindow extends JFrame {
+    public static MainWindow instance;
     MainController maincontroller;
 
     MenuBar menuBar;
@@ -12,6 +13,7 @@ public class MainWindow extends JFrame {
     CanvasArea canvasArea;
 
     public MainWindow() {
+        if(instance==null) instance = this;
         setTitle("Workflow util.Designer");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

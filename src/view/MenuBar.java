@@ -23,9 +23,9 @@ public class MenuBar extends JMenuBar{
         add(fileMenu);
 
         editMenu = new JMenu("Edit");
-        String[] editItems = {"Group", "Ungroup"};
-        editMenuItems = new JMenuItem[2];
-        for (int i = 0; i < 2; i++) {
+        String[] editItems = {"Group", "Ungroup","Label"};
+        editMenuItems = new JMenuItem[3];
+        for (int i = 0; i < 3; i++) {
             editMenuItems[i] = new JMenuItem(editItems[i]);
 //            editMenuItems[i].addActionListener(menuController);
             editMenu.add(editMenuItems[i]);

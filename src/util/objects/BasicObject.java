@@ -7,6 +7,7 @@ public abstract class BasicObject {
     public double x, y;
     public boolean selected = false;
     public boolean mute = false;
+    public Label label = null;
 
     ArrayList<ConnectionPort> connectionPorts = new ArrayList<ConnectionPort>();
 
@@ -32,7 +33,7 @@ public abstract class BasicObject {
 
     public abstract void render(Graphics g);
 
-    public abstract boolean inside(double detectX, double detextY);
+    public abstract boolean inside(double detectX, double detectY);
 
     public abstract boolean inside(double x1, double y1, double x2, double y2);
 
@@ -42,5 +43,26 @@ public abstract class BasicObject {
         for (ConnectionPort c : connectionPorts) {
             c.move((int) dx, (int) dy);
         }
+        if (label != null) {
+            label.move((int) dx, (int) dy);
+        }
     }
+
+    public ConnectionPort detectPort(double detectX, double detectY) {
+        if (mute) return null;
+        for (ConnectionPort c : connectionPorts) {
+            if (c.inside((int) detectX, (int) detectY)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public abstract Label getLabel();
+
+    public void setLabel(Label label) {
+        this.label = label;
+    }
+
+
 }

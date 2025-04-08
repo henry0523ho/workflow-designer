@@ -3,9 +3,14 @@ package util;
 import java.awt.*;
 import java.util.ArrayList;
 
+import util.links.BasicLink;
 import util.objects.BasicObject;
-import util.objects.BasicObject.Shape;
 import util.objects.CompositeObject;
+import util.objects.ConnectionPort;
+import util.objects.Label;
+import view.CanvasArea;
+import view.LabelDialog;
+import view.MainWindow;
 
 public class Designer {
     public static Designer instance = new Designer();
@@ -16,6 +21,8 @@ public class Designer {
 
     ArrayList<BasicObject> _objects = new ArrayList<>();
 
+    ArrayList<BasicLink> _links = new ArrayList<>();
+
     public enum Mode {
         CREATE,
         LINK,
@@ -24,7 +31,8 @@ public class Designer {
     }
 
     public Mode mode = Mode.SELECT;
-    public Shape shape = null;
+    public BasicObject.Shape shape = null;
+    public BasicLink.Shape linkShape = null;
 
 
     public Designer() {
@@ -46,9 +54,23 @@ public class Designer {
 //        if (result) _update = true;
     }
 
+    public void addLink(BasicLink link) {
+        _links.add(link);
+    }
+
+    public void removeLink(BasicLink link) {
+        boolean result = _links.remove(link);
+    }
+
     public void render(Graphics g) {
+        if (mode == Mode.LINK) {
+            showConnectionPort();
+        }
         for (BasicObject object : _objects) {
             object.render(g);
+        }
+        for (BasicLink link : _links) {
+            link.render(g);
         }
     }
 
@@ -70,6 +92,30 @@ public class Designer {
             }
         }
         return result;
+    }
+
+    public ConnectionPort detectPort(double detectX, double detectY) {
+        for (BasicObject object : _objects) {
+            if (object instanceof CompositeObject compositeObject) {
+                continue;
+            } else {
+                ConnectionPort port = object.detectPort(detectX, detectY);
+                if (port != null) {
+                    return port;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void showConnectionPort() {
+        for (BasicObject object : _objects) {
+            if (object instanceof CompositeObject compositeObject) {
+                object.setSelected(false);
+            } else {
+                object.setSelected(true);
+            }
+        }
     }
 
     public void clearAllSelected() {
@@ -117,6 +163,24 @@ public class Designer {
             obj.mute = false;
         }
         _objects.remove(object);
+    }
+
+    public void customizeLabelStyle() {
+        ArrayList<BasicObject> selectedObjects = new ArrayList<>();
+        for (BasicObject object : _objects) {
+            if (object.selected) {
+                selectedObjects.add(object);
+            }
+        }
+        if (selectedObjects.size() != 1) {
+            return;
+        }
+        BasicObject object = selectedObjects.getFirst();
+        if (object instanceof CompositeObject compositeObject) {
+            return;
+        }
+        System.out.println("customizeLabelStyle");
+        LabelDialog labelDialog = new LabelDialog(MainWindow.instance, object);
     }
 
 //    public void addUpdateHook(Runnable hook) {

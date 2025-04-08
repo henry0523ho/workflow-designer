@@ -32,6 +32,7 @@ public class OvalObject extends BasicObject {
     public void render(Graphics g) {
         _draw(g);
         if (selected) _drawConnectionPort(g);
+        if (label != null) label.render(g);
     }
 
     public boolean inside(double x1, double y1, double x2, double y2) {
@@ -46,5 +47,18 @@ public class OvalObject extends BasicObject {
             y2 = tmp;
         }
         return x1 <= x && x + WIDTH <= x2 && y1 <= y && y + HEIGHT <= y2;
+    }
+
+    @Override
+    public Label getLabel() {
+//        if(label == null) return new Label((int) (x), (int) (y));
+        return label;
+    }
+
+    @Override
+    public void setLabel(Label label){
+        this.label = label;
+        this.label.x= (int) (x+50);
+        this.label.y= (int) (y+25);
     }
 }

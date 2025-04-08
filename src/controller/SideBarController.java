@@ -1,7 +1,9 @@
 package controller;
 
 import util.Designer;
+import util.links.BasicLink;
 import util.objects.BasicObject;
+import view.CanvasArea;
 import view.SideBar;
 
 import javax.swing.*;
@@ -48,15 +50,24 @@ public class SideBarController implements ActionListener {
                 break;
             case "association":
                 currentMode = SideBarMode.ASSOCIATION;
-                Designer.instance.clearAllSelected();
+                Designer.instance.mode = Designer.Mode.LINK;
+                Designer.instance.linkShape= BasicLink.Shape.ASSOCIATION;
+                Designer.instance.showConnectionPort();
+                CanvasArea.instance.repaint();
                 break;
             case "generalization":
                 currentMode = SideBarMode.GENERALIZATION;
-                Designer.instance.clearAllSelected();
+                Designer.instance.mode = Designer.Mode.LINK;
+                Designer.instance.linkShape= BasicLink.Shape.GENERALIZATION;
+                Designer.instance.showConnectionPort();
+                CanvasArea.instance.repaint();
                 break;
             case "composition":
                 currentMode = SideBarMode.COMPOSITION;
-                Designer.instance.clearAllSelected();
+                Designer.instance.mode = Designer.Mode.LINK;
+                Designer.instance.linkShape= BasicLink.Shape.COMPOSITION;
+                Designer.instance.showConnectionPort();
+                CanvasArea.instance.repaint();
                 break;
             case "rect":
                 currentMode = SideBarMode.RECTANGLE;

@@ -55,4 +55,14 @@ public class CompositeObject extends BasicObject {
         }
         return true;
     }
+
+    @Override
+    public Label getLabel() {
+        return null;
+    }
+
+    @Override
+    public void setLabel(Label label) {
+        // Do nothing
+    }
 }

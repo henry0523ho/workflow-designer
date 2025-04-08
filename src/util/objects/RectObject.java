@@ -26,6 +26,9 @@ public class RectObject extends BasicObject {
     public void render(Graphics g) {
         _draw(g);
         if (selected) _drawConnectionPort(g);
+        if (label != null) {
+            label.render(g);
+        }
     }
 
     public boolean inside(double detectX, double detectY) {
@@ -44,5 +47,18 @@ public class RectObject extends BasicObject {
             y2 = tmp;
         }
         return x1 <= x && x + WIDTH <= x2 && y1 <= y && y + HEIGHT <= y2;
+    }
+
+    @Override
+    public Label getLabel() {
+//        if(label == null) return new Label((int) (x+25), (int) (y+25));
+        return label;
+    }
+
+    @Override
+    public void setLabel(Label label){
+        this.label = label;
+        this.label.x= (int) (x+25);
+        this.label.y= (int) (y+25);
     }
 }

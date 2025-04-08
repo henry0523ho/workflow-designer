@@ -7,10 +7,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 public class CanvasArea extends Canvas implements ActionListener {
+    public static CanvasArea instance;
 
     CanvasAreaController canvasAreaController;
 
     public CanvasArea() {
+        if(instance==null) instance = this;
         setBackground(Color.WHITE);
         canvasAreaController = new CanvasAreaController(this);
     }
@@ -25,5 +27,6 @@ public class CanvasArea extends Canvas implements ActionListener {
         super.paint(g);
         Designer.instance.render(g);
         canvasAreaController.drawSelectArea(g);
+        canvasAreaController.drawLinkPreview(g);
     }
 }

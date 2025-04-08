@@ -44,6 +44,12 @@ public class MenuBarController implements ActionListener {
                 Designer.instance.ungroupSelected();
             }
         }
+        if (item.getText().equals("Label")) {
+            System.out.println("Label");
+            if(Designer.instance.mode==Designer.Mode.SELECT) {
+                Designer.instance.customizeLabelStyle();
+            }
+        }
     }
 
 

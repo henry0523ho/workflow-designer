@@ -1,7 +1,12 @@
 package controller;
 
 import util.Designer;
+import util.links.AssociationLink;
+import util.links.BasicLink;
+import util.links.CompositionLink;
+import util.links.GeneralizationLink;
 import util.objects.BasicObject;
+import util.objects.ConnectionPort;
 import util.objects.OvalObject;
 import util.objects.RectObject;
 import view.CanvasArea;
@@ -24,9 +29,13 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
     int _dragEndX = -1;
     int _dragEndY = -1;
 
+    ConnectionPort _sourcePort = null;
+    ConnectionPort _targetPort = null;
+
     enum DragMode {
         SELECT_AREA,
-        DRAG_OBJECT
+        DRAG_OBJECT,
+        LINK,
     }
 
     DragMode dragMode = null;
@@ -40,9 +49,16 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
         g.drawRect(Math.min(_dragStartX, _dragEndX), Math.min(_dragStartY, _dragEndY), Math.abs(_dragStartX - _dragEndX), Math.abs(_dragStartY - _dragEndY));
     }
 
+    public void drawLinkPreview(Graphics g){
+        if(dragMode!=DragMode.LINK) return;
+        if(_sourcePort==null) return ;
+        g.setColor(Color.black);
+        g.drawLine((int) _sourcePort.x, (int) _sourcePort.y, (int) _dragEndX, (int) _dragEndY);
+    }
 
     public void mouseMoved(MouseEvent e) {
 //        System.out.println("Mouse moved to: " + e.getX() + ", " + e.getY());
+//        canvasArea.repaint();
     }
 
     public void mouseDragged(MouseEvent e) {
@@ -59,17 +75,21 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
                     return;
                 }
             }
-            if(dragMode == DragMode.DRAG_OBJECT) {
-                dragObject.move(e.getX()-_dragStartX, e.getY()-_dragStartY);
+            if (dragMode == DragMode.DRAG_OBJECT) {
+                dragObject.move(e.getX() - _dragStartX, e.getY() - _dragStartY);
                 _dragStartX = e.getX();
                 _dragStartY = e.getY();
                 canvasArea.repaint();
-            }
-            else if (dragMode == DragMode.SELECT_AREA) {
+            } else if (dragMode == DragMode.SELECT_AREA) {
                 _dragEndX = e.getX();
                 _dragEndY = e.getY();
                 canvasArea.repaint();
             }
+        }else if(Designer.instance.mode == Designer.Mode.LINK){
+            if(dragMode!=DragMode.LINK) return;
+            _dragEndX = e.getX();
+            _dragEndY = e.getY();
+            canvasArea.repaint();
         }
     }
 
@@ -112,6 +132,10 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
     public void mousePressed(MouseEvent e) {
 //        _dragStartX = e.getX();
 //        _dragStartY = e.getY();
+        if (Designer.instance.mode == Designer.Mode.LINK) {
+            _sourcePort = Designer.instance.detectPort(e.getX(), e.getY());
+            dragMode=DragMode.LINK;
+        }
     }
 
     @Override
@@ -127,7 +151,7 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
                 Designer.instance.clearAllSelected();
                 ArrayList<BasicObject> selectedObjects = Designer.instance.detectObject(_dragStartX, _dragStartY, _dragEndX, _dragEndY);
                 for (BasicObject object : selectedObjects) {
-                    if(!object.mute){
+                    if (!object.mute) {
                         object.setSelected(true);
                     }
                 }
@@ -135,6 +159,25 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
                 canvasArea.repaint();
                 dragMode = null;
             }
+        } else if (Designer.instance.mode == Designer.Mode.LINK) {
+
+            _targetPort = Designer.instance.detectPort(e.getX(), e.getY());
+            if (_sourcePort != null && _targetPort != null && _sourcePort != _targetPort) {
+                BasicLink link = null;
+                if (Designer.instance.linkShape == BasicLink.Shape.ASSOCIATION) {
+                    link = new AssociationLink(_sourcePort, _targetPort);
+                }else if(Designer.instance.linkShape==BasicLink.Shape.GENERALIZATION) {
+                    link = new GeneralizationLink(_sourcePort, _targetPort);
+                }else if(Designer.instance.linkShape==BasicLink.Shape.COMPOSITION) {
+                    link = new CompositionLink(_sourcePort, _targetPort);
+                }
+                Designer.instance.addLink(link);
+                CanvasArea.instance.repaint();
+            }
+            _dragStartX = _dragEndX = _dragStartY = _dragEndY = -1;
+            _sourcePort = null;
+            _targetPort = null;
+            dragMode=null;
         }
 
     }
