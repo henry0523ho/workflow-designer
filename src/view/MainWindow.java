@@ -14,7 +14,7 @@ public class MainWindow extends JFrame {
 
     public MainWindow() {
         if(instance==null) instance = this;
-        setTitle("Workflow util.Designer");
+        setTitle("Workflow Designer");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
