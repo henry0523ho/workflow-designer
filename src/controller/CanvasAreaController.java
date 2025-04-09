@@ -49,11 +49,14 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
         g.drawRect(Math.min(_dragStartX, _dragEndX), Math.min(_dragStartY, _dragEndY), Math.abs(_dragStartX - _dragEndX), Math.abs(_dragStartY - _dragEndY));
     }
 
-    public void drawLinkPreview(Graphics g){
-        if(dragMode!=DragMode.LINK) return;
-        if(_sourcePort==null) return ;
+    public void drawLinkPreview(Graphics g) {
+        if (dragMode != DragMode.LINK) return;
+//        if(_sourcePort==null) return ;
+        if (_dragStartY == -1 || _dragStartX == -1) return;
         g.setColor(Color.black);
-        g.drawLine((int) _sourcePort.x, (int) _sourcePort.y, (int) _dragEndX, (int) _dragEndY);
+//        g.drawLine((int) _sourcePort.x, (int) _sourcePort.y, (int) _dragEndX, (int) _dragEndY);
+        g.drawLine((int) _dragStartX, (int) _dragStartY, (int) _dragEndX, (int) _dragEndY);
+
     }
 
     public void mouseMoved(MouseEvent e) {
@@ -85,8 +88,8 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
                 _dragEndY = e.getY();
                 canvasArea.repaint();
             }
-        }else if(Designer.instance.mode == Designer.Mode.LINK){
-            if(dragMode!=DragMode.LINK) return;
+        } else if (Designer.instance.mode == Designer.Mode.LINK) {
+            if (dragMode != DragMode.LINK) return;
             _dragEndX = e.getX();
             _dragEndY = e.getY();
             canvasArea.repaint();
@@ -134,7 +137,9 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
 //        _dragStartY = e.getY();
         if (Designer.instance.mode == Designer.Mode.LINK) {
             _sourcePort = Designer.instance.detectPort(e.getX(), e.getY());
-            dragMode=DragMode.LINK;
+            _dragStartX = e.getX();
+            _dragStartY = e.getY();
+            dragMode = DragMode.LINK;
         }
     }
 
@@ -166,18 +171,18 @@ public class CanvasAreaController implements MouseMotionListener, MouseListener 
                 BasicLink link = null;
                 if (Designer.instance.linkShape == BasicLink.Shape.ASSOCIATION) {
                     link = new AssociationLink(_sourcePort, _targetPort);
-                }else if(Designer.instance.linkShape==BasicLink.Shape.GENERALIZATION) {
+                } else if (Designer.instance.linkShape == BasicLink.Shape.GENERALIZATION) {
                     link = new GeneralizationLink(_sourcePort, _targetPort);
-                }else if(Designer.instance.linkShape==BasicLink.Shape.COMPOSITION) {
+                } else if (Designer.instance.linkShape == BasicLink.Shape.COMPOSITION) {
                     link = new CompositionLink(_sourcePort, _targetPort);
                 }
                 Designer.instance.addLink(link);
-                CanvasArea.instance.repaint();
             }
             _dragStartX = _dragEndX = _dragStartY = _dragEndY = -1;
             _sourcePort = null;
             _targetPort = null;
-            dragMode=null;
+            dragMode = null;
+            CanvasArea.instance.repaint();
         }
 
     }
